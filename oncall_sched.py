@@ -41,19 +41,24 @@ def calculate_doc(ra_doc, total_days):
 
     return ra_doc
 
-def pick_person(ras):
+def pick_person(ra_doc, ra_exclude, night):
+    ra_doc_list = list(ra_doc.keys())
+    l = len(ra_doc.keys())
     while True:
-        person = list(ras.keys()) [random.randint(0,len(ras)-1)]
-        if ras[person] > 0:
-            ras[person] = ras[person] - 1
+        person = ra_doc_list[random.randint(0,l-1)]
+        if night not in ra_exclude[person] and ra_doc[person] > 0:
+            ra_doc[person] = ra_doc[person] - 1
             break
     return person
 
-def assign_on_call(ras, total_days):
+def assign_on_call(ras, total_days, ra_exclude):
     nights = [None] * total_days
     oncall = []
-    for night in nights:
-        person = pick_person(ras)
+    for i, night in enumerate(nights):
+        while True:
+            person = pick_person(ras, ra_exclude, i)
+            if i not in ra_exclude[person]:
+                break;
         oncall.append(person)
     return oncall
 
@@ -69,11 +74,8 @@ print(total_days)
 
 ra_doc = calculate_doc(ra_doc, total_days)
 
-# for person in ra_doc:
-#     set_exclusion(person, ra_exclude, first_day)
-#
-# for person in ra_exclude:
-#     print(ra_exclude[person])
+for person in ra_doc:
+    set_exclusion(person, ra_exclude, first_day)
 
-oncall = assign_on_call(ra_doc, total_days)
+oncall = assign_on_call(ra_doc, total_days, ra_exclude)
 print(oncall)
