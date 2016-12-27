@@ -60,7 +60,7 @@ def set_exclusion(person, first_day):
         exclusion = calculate_offset(day, first_day)
         exclude.append(exclusion)
         day = input()
-        return exclude
+    return exclude
 
 def pick_person(ra_doc, ra_exclude, night):
     ra_doc_list = list(ra_doc.keys())
@@ -72,13 +72,13 @@ def pick_person(ra_doc, ra_exclude, night):
             break
     return person
 
-def assign_on_call(ras, total_days, ra_exclude):
-    nights = [None] * total_days
-    oncall = []
-    for i, night in enumerate(nights):
+def assign_on_call(ra_doc, first_day, total_days, ra_exclude):
+    oncall = {}
+    for night in range(total_days):
+        date = first_day + datetime.timedelta(days=night)
         while True:
-            person = pick_person(ras, ra_exclude, i)
-            if i not in ra_exclude[person]:
+            person = pick_person(ra_doc, ra_exclude, night)
+            if night not in ra_exclude[person]:
                 break;
-        oncall.append(person)
+        oncall[date] = person
     return oncall

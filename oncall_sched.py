@@ -12,6 +12,4 @@ ra_exclude = {}
 for person in staff:
     ra_exclude[person] = set_exclusion(person, first_day)
 
-oncall = assign_on_call(ra_doc, total_days, dict(ra_exclude))
-
-print(oncall)
+oncall = assign_on_call(ra_doc, first_day, total_days, dict(ra_exclude))
