@@ -1,6 +1,11 @@
 import datetime, re, random
 from collections import defaultdict
 
+#TODO:  update ra_doc to include weekend count
+#TODO:  incorporate weekend into assign on call
+#TODO:  include holidays
+#
+
 def generate_ra_list():
     ra_list = []
     print('enter your staff')
@@ -29,7 +34,7 @@ def count_weekends(first_day, total_days):
 
     return sum([is_weekend(day) for day in date_list])
 
-def distribute_remainder(ra_doc, remainder):
+def distribute_remainder(ra_doc, remainder, type_of_day):
     touched = []
     ra_doc_list = list(ra_doc.keys())
     l = len(ra_doc)
@@ -39,16 +44,21 @@ def distribute_remainder(ra_doc, remainder):
             if person not in touched:
                 break
         touched.append(person)
-        ra_doc[person] = ra_doc[person] + 1
+        ra_doc[person][type_of_day] = ra_doc[person][type_of_day] + 1
         remainder = remainder - 1
     return ra_doc
 
-def calculate_doc(staff, total_days):
-    oncall_per = int(total_days/len(staff))
-    remainder = total_days % len(staff)
+def calculate_doc(staff, total_days, num_weekends):
+    num_weekdays = total_days - num_weekends
+    weekday_per = int(num_weekdays/len(staff))
+    weekend_per = int(num_weekends/len(staff))
 
-    ra_doc = {k : oncall_per for k in staff}
-    ra_doc = distribute_remainder(ra_doc, remainder)
+    weekday_remainder = num_weekdays % len(staff)
+    weekend_remainder = num_weekends % len(staff)
+
+    ra_doc = {k : [weekday_per, weekend_per] for k in staff}
+    ra_doc = distribute_remainder(ra_doc, weekday_remainder, 0)
+    ra_doc = distribute_remainder(ra_doc, weekend_remainder, 1)
 
     return ra_doc
 
@@ -60,7 +70,7 @@ def set_exclusion(person, first_day):
         exclusion = calculate_offset(day, first_day)
         exclude.append(exclusion)
         day = input()
-        return exclude
+    return exclude
 
 def pick_person(ra_doc, ra_exclude, night):
     ra_doc_list = list(ra_doc.keys())
@@ -72,13 +82,13 @@ def pick_person(ra_doc, ra_exclude, night):
             break
     return person
 
-def assign_on_call(ras, total_days, ra_exclude):
-    nights = [None] * total_days
-    oncall = []
-    for i, night in enumerate(nights):
+def assign_on_call(ra_doc, first_day, total_days, ra_exclude):
+    oncall = {}
+    for night in range(total_days):
+        date = first_day + datetime.timedelta(days=night)
         while True:
-            person = pick_person(ras, ra_exclude, i)
-            if i not in ra_exclude[person]:
+            person = pick_person(ra_doc, ra_exclude, night)
+            if night not in ra_exclude[person]:
                 break;
-        oncall.append(person)
+        oncall[date] = person
     return oncall
