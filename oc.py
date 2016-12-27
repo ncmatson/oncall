@@ -19,15 +19,15 @@ def calculate_offset(input_date_string, first_day):
     input_date = string_to_date(input_date_string)
     return (input_date - first_day).days
 
-def set_exclusion(person, first_day):
-    exclude = []
-    print("what days can %s not be oncall?" % person)
-    day = input()
-    while day != 'done':
-        exclusion = calculate_offset(day, first_day)
-        exclude.append(exclusion)
-        day = input()
-    return exclude
+def count_weekends(first_day, total_days):
+    date_list = [first_day + datetime.timedelta(days=x) for x in range(0, total_days)]
+
+    def is_weekend(date):
+        if 4 <= date.isoweekday() <= 6:
+            return 1
+        else: return 0
+
+    return sum([is_weekend(day) for day in date_list])
 
 def distribute_remainder(ra_doc, remainder):
     touched = []
@@ -43,14 +43,24 @@ def distribute_remainder(ra_doc, remainder):
         remainder = remainder - 1
     return ra_doc
 
-def calculate_doc(ra_doc, total_days):
-    oncall_per = int(total_days/len(ra_doc))
-    remainder = total_days % len(ra_doc)
+def calculate_doc(staff, total_days):
+    oncall_per = int(total_days/len(staff))
+    remainder = total_days % len(staff)
 
-    ra_doc = {k : v + oncall_per for k, v in ra_doc.items()}
+    ra_doc = {k : oncall_per for k in staff}
     ra_doc = distribute_remainder(ra_doc, remainder)
 
     return ra_doc
+
+def set_exclusion(person, first_day):
+    exclude = []
+    print("what days can %s not be oncall?" % person)
+    day = input()
+    while day != 'done':
+        exclusion = calculate_offset(day, first_day)
+        exclude.append(exclusion)
+        day = input()
+        return exclude
 
 def pick_person(ra_doc, ra_exclude, night):
     ra_doc_list = list(ra_doc.keys())
