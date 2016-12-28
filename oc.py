@@ -106,6 +106,7 @@ def pick_person(ra_doc, ra_exclude, night, type_of_day):
 def assign_on_call(ra_doc, first_day, total_days, ra_exclude):
     oncall = {}
     for night in range(total_days):
+<<<<<<< HEAD
         # create date object for the 'night'
         date = first_day + datetime.timedelta(days=night)
 
@@ -114,5 +115,12 @@ def assign_on_call(ra_doc, first_day, total_days, ra_exclude):
         person = pick_person(ra_doc, ra_exclude, night, is_weekend(date))
 
         # assign that person to be on-call
+=======
+        date = first_day + datetime.timedelta(days=night)
+        while True:
+            person = pick_person(ra_doc, ra_exclude, night)
+            if night not in ra_exclude[person]:
+                break;
+>>>>>>> e6de83fb32ea4d8ee0a07d992302c5fabba0498b
         oncall[date] = person
     return oncall
