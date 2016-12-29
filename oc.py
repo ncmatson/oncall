@@ -1,7 +1,6 @@
 import datetime, re, random
 from collections import OrderedDict
 
-#TODO:  incorporate weekend into assign on call
 #TODO:  include holidays
 
 def generate_ra_list():
