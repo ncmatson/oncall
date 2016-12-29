@@ -1,4 +1,5 @@
 from oc import *
+from operator import itemgetter
 
 first_day   = string_to_date(input('whats the first day on call? '))
 last_day    = string_to_date(input('whats the last day on call? '))
@@ -14,4 +15,8 @@ for person in staff:
 
 oncall = assign_on_call(ra_doc, first_day, total_days, dict(ra_exclude))
 
-print(oncall)
+for night in oncall:
+    if is_weekend(night[0]):
+        print(night[0].isoformat() + '\t' + night[1] + '\tweekend')
+    else:
+        print(night[0].isoformat() + '\t' + night[1])

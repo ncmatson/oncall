@@ -1,4 +1,5 @@
 import datetime, re, random
+from collections import OrderedDict
 
 #TODO:  incorporate weekend into assign on call
 #TODO:  include holidays
@@ -104,9 +105,8 @@ def pick_person(ra_doc, ra_exclude, night, type_of_day):
     return person
 
 def assign_on_call(ra_doc, first_day, total_days, ra_exclude):
-    oncall = {}
+    oncall = []
     for night in range(total_days):
-<<<<<<< HEAD
         # create date object for the 'night'
         date = first_day + datetime.timedelta(days=night)
 
@@ -115,5 +115,5 @@ def assign_on_call(ra_doc, first_day, total_days, ra_exclude):
         person = pick_person(ra_doc, ra_exclude, night, is_weekend(date))
 
         # assign that person to be on-call
-        oncall[date] = person
+        oncall.append((date, person))
     return oncall
