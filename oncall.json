@@ -1,0 +1,22 @@
+{
+  "name" : "test",
+  "first_day" : "1/1/2016",
+  "last_day" : "1/21/2016",
+  "staff" : [
+              "cameron",
+              "ryan",
+              "holt",
+              "alex"
+            ],
+  "ra_exclude" : {
+                  "cameron" : [
+                    "1/1/2016",
+                    "2/2/2016"
+                  ],
+                  "ryan" : [
+                    "2/3/2016"
+                  ],
+                  "holt" : [],
+                  "alex" : []
+               }
+}
