@@ -1,18 +1,6 @@
 import datetime, re, random
 from collections import OrderedDict
 
-#TODO:  include holidays
-
-def generate_ra_list():
-    ra_list = []
-    print('enter your staff')
-    while True:
-        ra = input()
-        if ra == 'done':
-            break;
-        ra_list.append(ra)
-    return ra_list
-
 # takes a properly formated string and returns a date object
 #   (m)m/(d)d/yyyy
 def string_to_date(input_date_string):
@@ -34,15 +22,25 @@ def is_weekend(date):
 
 # counts the number of weekend days (th, f, sa) given a starting date
 #   and a total number of days
-def count_weekends(first_day, total_days):
-    date_list = [first_day + datetime.timedelta(days=x) for x in range(0, total_days)]
+def count_weekends(first_day, total_days, block_days):
+    date_list = [first_day + datetime.timedelta(days=x) for x in range(0, total_days) if x not in block_days]
 
     return sum([is_weekend(day) for day in date_list])
 
+def count_weekdays(first_day, total_days, block_days):
+    date_list = [first_day + datetime.timedelta(days=x) for x in range(0, total_days) if x not in block_days]
+
+    return len(date_list) - sum([is_weekend(day) for day in date_list])
+
+def calculate_block_days(block_days, first_day):
+    return [calculate_offset(day, first_day) for day in block_days]
+
 # Calculate how many days each RA in staff should be on-call given the total number
 #   of days, and total number of weekend days
-def calculate_doc(staff, total_days, num_weekends):
-    num_weekdays = total_days - num_weekends
+def calculate_doc(staff, total_days, first_day, block_days):
+    num_weekends = count_weekends(first_day, total_days, block_days)
+    num_weekdays = count_weekdays(first_day, total_days, block_days)
+
     weekday_per = int(num_weekdays/len(staff))
     weekend_per = int(num_weekends/len(staff))
 
@@ -58,6 +56,7 @@ def calculate_doc(staff, total_days, num_weekends):
     def distribute_remainder(ra_doc, remainder, type_of_day):
         # RAs who have been given an extra day
         touched = []
+
         ra_doc_list = list(ra_doc.keys())
         l = len(ra_doc)
 
@@ -76,17 +75,6 @@ def calculate_doc(staff, total_days, num_weekends):
 
     return ra_doc
 
-# asks user for a list of dates that the given person CANNOT be on-call
-def set_exclusion(person, first_day):
-    exclude = []
-    print("what days can %s not be oncall? (\'done\' to stop)" % person)
-    day = input()
-    while day != 'done':
-        exclusion = calculate_offset(day, first_day)
-        exclude.append(exclusion)
-        day = input()
-    return exclude
-
 # type_of_day is either 0 for weekday or 1 for weekend
 def pick_person(ra_doc, ra_exclude, night, type_of_day):
     # make a list out of the on call dict
@@ -103,9 +91,11 @@ def pick_person(ra_doc, ra_exclude, night, type_of_day):
             break
     return person
 
-def assign_on_call(ra_doc, first_day, total_days, ra_exclude):
+def assign_on_call(ra_doc, first_day, total_days, ra_exclude, block_days):
     oncall = []
     for night in range(total_days):
+        if night in block_days:
+            continue
         # create date object for the 'night'
         date = first_day + datetime.timedelta(days=night)
 

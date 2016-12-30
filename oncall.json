@@ -6,7 +6,11 @@
               "cameron",
               "ryan",
               "holt",
-              "alex"
+              "alex",
+              "aabid",
+              "samiat",
+              "hannah",
+              "amanda"
             ],
   "ra_exclude" : {
                   "cameron" : [
@@ -14,9 +18,16 @@
                     "2/2/2016"
                   ],
                   "ryan" : [
-                    "2/3/2016"
+                    "1/1/2016"
                   ],
-                  "holt" : [],
-                  "alex" : []
-               }
+                  "holt" : ["1/1/2016"],
+                  "alex" : [],
+                  "aabid" : [],
+                  "samiat" : [],
+                  "hannah" : [],
+                  "amanda" : []
+               },
+   "block_days" : [
+                    "1/3/2016"
+                  ]
 }

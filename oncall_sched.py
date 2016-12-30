@@ -16,31 +16,20 @@ def load(filename) :
 
     return json.load(f)
 
-option = input('load file? (y/n) ')
-if (option == 'y'):
-    data = load('oncall.json')
+data = load('oncall.json')
 
-    first_day   = string_to_date(data['first_day'])
-    last_day    = string_to_date(data['last_day'])
-    total_days  = (last_day - first_day).days + 1
+first_day   = string_to_date(data['first_day'])
+last_day    = string_to_date(data['last_day'])
+total_days  = (last_day - first_day).days + 1
 
-    staff       = data['staff']
+staff       = data['staff']
 
-    ra_exclude  = data['ra_exclude']
+ra_exclude  = data['ra_exclude']
 
-else:
-    first_day   = string_to_date(input('whats the first day on call? '))
-    last_day    = string_to_date(input('whats the last day on call? '))
-    total_days  = (last_day - first_day).days + 1
+block_days  = calculate_block_days(data['block_days'], first_day)
 
-    staff = generate_ra_list()
+ra_doc = calculate_doc(staff, total_days, first_day, block_days)
 
-    ra_exclude = {}
-    for person in staff:
-        ra_exclude[person] = set_exclusion(person, first_day)
-
-ra_doc = calculate_doc(staff, total_days, count_weekends(first_day, total_days))
-
-oncall = assign_on_call(ra_doc, first_day, total_days, dict(ra_exclude))
+oncall = assign_on_call(ra_doc, first_day, total_days, dict(ra_exclude), block_days)
 
 toCSV('oncall.csv', oncall)
