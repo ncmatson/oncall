@@ -72,14 +72,17 @@ def doIt():
 
     oncall = assign_on_call(ra_doc, first_day, total_days, dict(ra_exclude), block_days)
 
+    print('assigned ', len(oncall), ' nights on call.')
+
     toCSV('oncall.csv', oncall)
 
     writeStaff(staff, oncall)
 
 if __name__ == '__main__':
+    count = 60
     # Start bar as a process
     print('writing on call...')
-    while(True):
+    while(count > 0):
         print('.', end='')
         p = multiprocessing.Process(target=doIt)
         p.start()
@@ -89,6 +92,7 @@ if __name__ == '__main__':
         if p.is_alive():
             p.terminate()
             p.join()
+            count = count - 1
         else:
             print('done!')
             break
