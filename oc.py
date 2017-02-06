@@ -5,7 +5,7 @@ from collections import OrderedDict
 #   (m)m/(d)d/yyyy
 def string_to_date(input_date_string):
     input_date_list = re.split('-|/| ', input_date_string)
-    return datetime.date(int(input_date_list[2]), int(input_date_list[0]), int(input_date_list[1]))
+    return datetime.date(int(input_date_list[0]), int(input_date_list[1]), int(input_date_list[2]))
 
 # returns a number representing the diference between the given date
 #   and the first date
