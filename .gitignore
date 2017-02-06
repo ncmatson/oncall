@@ -2,4 +2,4 @@ test.py
 __pycache__
 *.pyc
 *.csv
-*.json
+oncall.json
